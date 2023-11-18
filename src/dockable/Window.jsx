@@ -133,7 +133,7 @@ function Window({
             onSort={onSort}
             windowId={windowId}
             hoverBorder={hoverBorder}
-            onClose={() => onTabClosed(windowId)}
+            onClose={(...args) => onTabClosed(...args)}
             hideMenu={
               // hide the context menu if there aren't any actions to show
               hideMenu || !getActions(GetSelectedWidget()).length
@@ -204,7 +204,7 @@ function TabBar({
                 const closeTab = () => {
                     if (child.props.onClose)
                         child.props.onClose(child.props.id);
-                    onClose(i);
+                    onClose(windowId, i);
                 }
 
                 return <Draggable

@@ -199,6 +199,13 @@ function Dockable({
 
   function handleTabClosed(panelId: number, windowId: number, tabId: number) {
     let newPanels = JSON.parse(JSON.stringify(getPanels()));
+
+    console.log('newPanels', newPanels, {
+        panelId,
+        windowId,
+        tabId,
+    });
+
     newPanels[panelId].windows[windowId].widgets.splice(tabId, 1);
     newPanels = cleanup(newPanels);
     updatePanels(newPanels);

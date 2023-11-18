@@ -35,7 +35,7 @@
   },
   "name": "react-dockable-ts",
   "author": "fezz",
-  "module": "dist/react-dockable-ts.esm.js",
+  "module": "src/index.tsx",
   "size-limit": [
     {
       "path": "dist/react-dockable-ts.cjs.production.min.js",

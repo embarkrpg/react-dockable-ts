@@ -1,3 +1,3 @@
-import PanelGroup from "./PanelGroup.js";
+import PanelGroup from "./PanelGroup.jsx";
 
 export default PanelGroup;
