@@ -83,7 +83,12 @@ function WindowPanel({
 
   function filterVisibleWidgets(thisWindow) {
     return thisWindow.widgets.filter(
-      (widget) => getWidgetComponent(widget) && !(getWidgetComponent(widget)?.props.hidden || hidden[widget])
+      (widget) => {
+        if (!getWidgetComponent(widget)) {
+          console.warn(`Widget ${widget} not found. keeping it hidden`);
+        }
+        !(getWidgetComponent(widget)?.props.hidden || hidden[widget])
+      }
     );
   }
 
