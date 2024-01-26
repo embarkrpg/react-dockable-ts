@@ -338,7 +338,8 @@ function Dockable({
           panelClassName={undefined}
           dividerClassName={undefined}
         >
-          {getFilteredPanels().map((thisPanel, panelIndex) => (
+          {getFilteredPanels().map((thisPanel, panelIndex) => {
+            return (
             <WindowPanel
               key={panelIndex}
               index={panelIndex}
@@ -364,7 +365,7 @@ function Dockable({
               tabHeight={tabHeight}
               hidden={hidden || {}}
             />
-          ))}
+            )})}
         </PanelGroup>
       </DragDropContext>
       {state.contextMenu && state.contextMenu.show && (

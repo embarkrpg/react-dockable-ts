@@ -1,4 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+
+export type DividerProps = {
+  size?: number;
+  bleed?: number;
+  color?: string;
+  onDragStart?: (event: React.PointerEvent<HTMLDivElement>) => void;
+  direction?: 'row' | 'column';
+  className?: string;
+};
 
 function Divider({
   size = 1,
@@ -7,12 +16,12 @@ function Divider({
   onDragStart,
   direction,
   className,
-}) {
+}: DividerProps) {
   function getCursor() {
     return direction === 'row' ? 'ew-resize' : 'ns-resize';
   }
 
-  function getPropertyName(type, inverse) {
+  function getPropertyName(type: string, inverse: boolean = false) : string {
     let isRow = direction === 'row';
     if (inverse) isRow = !isRow;
 
@@ -22,7 +31,7 @@ function Divider({
       case 'position':
         return isRow ? 'left' : 'top';
       default:
-        return;
+        throw new Error('Invalid property name: ' + type);
     }
   }
 

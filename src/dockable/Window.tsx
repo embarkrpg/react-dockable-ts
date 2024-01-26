@@ -4,6 +4,29 @@ import { Droppable, Draggable } from 'react-beautiful-dnd';
 import css from './css/Window.module.css';
 // import Color from "color";
 
+export type WindowProps = {
+  index: number;
+  active: string;
+  windowId: string;
+  isLast: boolean;
+  draggingTab: boolean;
+  hoverBorder: number;
+  selected: number;
+  hideTabs: boolean;
+  hideMenu: boolean;
+  tabHeight: number;
+  style: any;
+  onSort: (windowId: string, from: number, to: number) => void;
+  onActive: (id: string) => void;
+  onContextClick: (actions: any[], x: number, y: number) => void;
+  onHoverBorder: (index: number) => void;
+  onTabSelect: (tabId: number, componentId: string) => void;
+  onTabSwitch: (size: number) => void;
+  onTabClosed: (windowId: string, tabId?: number) => void;
+  onWindowClosed: (windowId: string) => void;
+  children: React.ReactNode[]
+};
+
 function Window({
   index,
   active,
@@ -25,13 +48,13 @@ function Window({
   onTabClosed,
   onWindowClosed,
   children,
-}) {
+}: WindowProps) {
   const widgetRef = useRef();
   const containerRef = useRef();
 
   // When tab has been switched, report the minsize of the new widget
   useEffect(() => {
-    function getSize(tab) {
+    function getSize(tab : number) {
       let widget = React.Children.toArray(children)[
         tab == undefined ? selected : tab
       ];
@@ -149,6 +172,20 @@ function Window({
   );
 }
 
+export type TabBarProps = {
+  active: string;
+  widgets: React.ReactNode[];
+  selected: number;
+  onTabClick: (tabId: number, componentId: string) => void;
+  onContextClick: (actions: any[], x: number, y: number) => void;
+  onSort: (windowId: string, from: number, to: number) => void;
+  windowId: string;
+  hoverBorder: number;
+  onClose: (tabId: number) => void;
+  hideMenu: boolean;
+  tabHeight: number;
+};
+
 function TabBar({
   active,
   widgets,
@@ -161,7 +198,7 @@ function TabBar({
   onClose,
   hideMenu,
   tabHeight,
-}) {
+}: TabBarProps) {
   function getStyle(style, snapshot) {
     if (!snapshot.isDropAnimating) {
       return style;

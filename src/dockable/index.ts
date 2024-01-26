@@ -1,4 +1,4 @@
-import Dockable from "./Dockable.tsx";
+import Dockable from "./Dockable";
 import { Widget } from "./Widget";
 
 export default Dockable;
