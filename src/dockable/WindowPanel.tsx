@@ -4,6 +4,34 @@ import Window from "./Window";
 import { Widget } from "./Widget";
 
 import css from "./css/WindowPanel.module.css";
+export type WindowPanelProps = {
+  index: number;
+  isLast: boolean;
+  draggingTab: boolean;
+  hoverBorder: number;
+  onHoverBorder: (index: number) => void;
+  windows: any[];
+  onTabSort: (panelId: number, from: number, to: number) => void;
+  onTabSelect: (
+    panelId: number,
+    windowId: number,
+    tabId: number,
+    componentId: string
+  ) => void;
+  onContextClick: (actions: any[], x: number, y: number) => void;
+  widgets: React.ReactNode[];
+  onUpdate: (panelId: number, windows: any[]) => void;
+  onTabClosed: (panelId: number, windowId: number, tabId?: number) => void;
+  onWindowClosed: (panelId: number, windowId: number) => void;
+  spacing?: number;
+  hideMenus?: boolean;
+  hideTabs?: boolean;
+  active: string;
+  onActive: (id: string) => void;
+  tabHeight?: number;
+  hidden?: any;
+};
+
 
 function WindowPanel({
   index,
@@ -26,7 +54,7 @@ function WindowPanel({
   onActive,
   tabHeight,
   hidden,
-}) {
+}: WindowPanelProps) {
   const containerRef = useRef();
   // let windowRefs = [];
 
@@ -81,13 +109,13 @@ function WindowPanel({
     ];
   }
 
-  function filterVisibleWidgets(thisWindow) {
+  function filterVisibleWidgets(thisWindow: { widgets: any[]; }) {
     return thisWindow.widgets.filter(
       (widget) => {
         if (!getWidgetComponent(widget)) {
           console.warn(`Widget ${widget} not found. keeping it hidden`);
         }
-        !(getWidgetComponent(widget)?.props.hidden || hidden[widget])
+        return !(getWidgetComponent(widget)?.props.hidden || hidden[widget])
       }
     );
   }

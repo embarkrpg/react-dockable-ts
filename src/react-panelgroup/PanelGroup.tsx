@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
-import Panel from './Panel.jsx';
-import Divider from './Divider.jsx';
+import Panel from './Panel';
+import Divider from './Divider';
 
 /*
   PanelGroup is the component responsible for
@@ -8,6 +8,22 @@ import Divider from './Divider.jsx';
   special functionality for cascading the resize
   to neighboring panels when resized beyond min/max
 */
+
+export type PanelGroupProps = {
+  onUpdate?: (panels: any[]) => void;
+  onResizeStart?: (panels: any[]) => void;
+  onResizeEnd?: (panels: any[]) => void;
+  panelWidths?: any[];
+  children?: React.ReactNode;
+  defaultPanel?: any;
+  direction?: 'row' | 'column';
+  spacing?: number;
+  className?: string;
+  panelClassName?: string;
+  dividerClassName?: string;
+  panelColor?: string;
+  borderColor?: string;
+};
 
 function PanelGroup({
   onUpdate,
@@ -23,7 +39,7 @@ function PanelGroup({
   dividerClassName,
   panelColor = 'default',
   borderColor = 'default',
-}) {
+}: PanelGroupProps) {
   const [panels, setPanels] = useState([]);
   const [dragIndex, setDragIndex] = useState(null);
 
