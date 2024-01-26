@@ -218,7 +218,7 @@ function TabBar({
   }
 
   return (
-    <Droppable droppableId={windowId} direction="horizontal">
+    <Droppable droppableId={windowId} type="dockable-tab" direction="horizontal">
       {(provided, snapshot) => (
         <div
           className={`${css.tabBar} ${

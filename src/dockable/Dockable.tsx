@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, DragStart, DropResult, ResponderProvided } from 'react-beautiful-dnd';
 import { arrayMoveImmutable as arrayMove } from 'array-move';
 import PanelGroup from '../react-panelgroup';
 import ContextMenu from './ContextMenu';
@@ -21,7 +21,7 @@ import { Actions } from './ContextMenu';
 //   </Panel>
 // </Dockable>
 
-type HoverBorder = [number | null, number | null] | null;
+export type HoverBorder = [number | null, number | null] | null;
 
 type ContextMenu = {
   show: boolean;
@@ -53,6 +53,8 @@ type DockableProps = {
   hideTabs?: boolean;
   active?: string;
   tabHeight?: number;
+  handleDragStart? : (start: DragStart, provided: ResponderProvided) => void;
+  handleDragEnd? : (result: DropResult, provided: ResponderProvided) => void;
   children?: JSX.Element | JSX.Element[];
 };
 
@@ -68,6 +70,8 @@ function Dockable({
   hideTabs,
   active,
   tabHeight,
+  handleDragStart,
+  handleDragEnd,
   children,
 }: DockableProps) {
   const [state, setState] = useState({
@@ -230,11 +234,19 @@ function Dockable({
     updatePanels(newPanels);
   }
 
-  function handleDragStart() {
+  function dockableHandleDragStart(start: DragStart, provided: ResponderProvided) {
+    if(start.type !== 'dockable-tab') {
+      // forward along events not for us.
+      return handleDragStart?.(start, provided)
+    }
     setState({ ...state, draggingTab: true });
   }
 
-  function handleDragEnd(result: DropResult) {
+  function dockableHandleDragEnd(result: DropResult, provided: ResponderProvided) {
+    if(result.type !== 'dockable-tab') {
+      return handleDragEnd?.(result, provided)
+    }
+
     let newPanels = JSON.parse(JSON.stringify(getPanels()));
     let source = result.source.droppableId.split(',');
 
@@ -332,7 +344,7 @@ function Dockable({
       }`}
       style={theme}
     >
-      <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+      <DragDropContext onDragEnd={dockableHandleDragEnd} onDragStart={dockableHandleDragStart}>
         <PanelGroup
           spacing={spacing || 0}
           borderColor={'transparent'}

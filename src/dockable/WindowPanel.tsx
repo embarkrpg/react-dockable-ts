@@ -4,12 +4,13 @@ import Window from "./Window";
 import { Widget } from "./Widget";
 
 import css from "./css/WindowPanel.module.css";
+import { HoverBorder } from "./Dockable";
 export type WindowPanelProps = {
   index: number;
   isLast: boolean;
   draggingTab: boolean;
-  hoverBorder: number;
-  onHoverBorder: (index: number) => void;
+  hoverBorder: HoverBorder;
+  onHoverBorder: (index: HoverBorder) => void;
   windows: any[];
   onTabSort: (panelId: number, from: number, to: number) => void;
   onTabSelect: (
