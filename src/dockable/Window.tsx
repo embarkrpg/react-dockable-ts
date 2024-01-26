@@ -238,11 +238,11 @@ function TabBar({
           >
             {widgets.map((child, i) => {
                 const TabContainer = child.props.TabContainerComponent || 'div';
-                const closeTab = () => {
+                const maybeCloseTab = typeof TabContainer == 'string' ? {}: {closeTab: () => {
                     if (child.props.onClose)
                         child.props.onClose(child.props.id);
                     onClose(windowId, i);
-                }
+                }}
 
                 return <Draggable
                     key={`${windowId},${i}`}
@@ -256,7 +256,7 @@ function TabBar({
                             {...provided.dragHandleProps}
                             key={i}
                             className={`${css.tab} ${i === selected ? css.active : ''}`}
-                            closeTab={closeTab}
+                            {...maybeCloseTab}
                             onMouseDown={e => {
                                 onTabClick(i, child.props.id);
                                 e.stopPropagation();
