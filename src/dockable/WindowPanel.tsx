@@ -12,7 +12,12 @@ export type WindowPanelProps = {
   hoverBorder: HoverBorder;
   onHoverBorder: (index: HoverBorder) => void;
   windows: any[];
-  onTabSort: (panelId: number, from: number, to: number) => void;
+  onTabSort: (
+    panelIndex: number,
+    windowIndex: number,
+    tabStart: number,
+    tabEnd: number
+  ) => void;
   onTabSelect: (
     panelId: number,
     windowId: number,
@@ -20,14 +25,14 @@ export type WindowPanelProps = {
     componentId: string
   ) => void;
   onContextClick: (actions: any[], x: number, y: number) => void;
-  widgets: React.ReactNode[];
+  widgets?: JSX.Element | JSX.Element[];
   onUpdate: (panelId: number, windows: any[]) => void;
-  onTabClosed: (panelId: number, windowId: number, tabId?: number) => void;
+  onTabClosed: (panelId: number, windowId: number, tabId: number) => void;
   onWindowClosed: (panelId: number, windowId: number) => void;
   spacing?: number;
   hideMenus?: boolean;
   hideTabs?: boolean;
-  active: string;
+  active?: string;
   onActive: (id: string) => void;
   tabHeight?: number;
   hidden?: any;
@@ -56,7 +61,7 @@ function WindowPanel({
   tabHeight,
   hidden,
 }: WindowPanelProps) {
-  const containerRef = useRef();
+  const containerRef = useRef<HTMLDivElement>()
   // let windowRefs = [];
 
   function handleTabSwitch(i, size) {
@@ -77,7 +82,7 @@ function WindowPanel({
   }
 
   function renderBorders() {
-    if (!containerRef.current) return;
+    if (!containerRef.current) return undefined;
     const rect = containerRef.current.getBoundingClientRect();
 
     return [
@@ -116,6 +121,7 @@ function WindowPanel({
         if (!getWidgetComponent(widget)) {
           console.warn(`Widget ${widget} not found. keeping it hidden`);
         }
+        // @ts-ignore
         return !(getWidgetComponent(widget)?.props.hidden || hidden[widget])
       }
     );
@@ -135,6 +141,7 @@ function WindowPanel({
 
   function getWidgetComponent(id) {
     return React.Children.toArray(widgets).find(
+      // @ts-ignore
       (child) => child.props.id === id
     );
   }

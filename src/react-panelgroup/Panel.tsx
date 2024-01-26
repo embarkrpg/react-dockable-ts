@@ -5,11 +5,11 @@ export type PanelProps = {
   color?: string;
   data: any;
   direction?: "row" | "column";
-  children?: React.ReactNode;
+  children?: JSX.Element | JSX.Element[];
 }
 
 const Panel = forwardRef(function (
-  { className, color, data, direction, children } : PanelProps,
+  { className, color, data, direction, children }: PanelProps,
   ref
 ) {
   function getPropertyName(type: string, inverse: boolean = false) {
@@ -31,6 +31,7 @@ const Panel = forwardRef(function (
   return (
     <div
       className={`pg-panel ${className || ""}`}
+      // @ts-ignore
       ref={ref}
       style={{
         [getPropertyName("size")]: data.size,

@@ -14,7 +14,7 @@ export type PanelGroupProps = {
   onResizeStart?: (panels: any[]) => void;
   onResizeEnd?: (panels: any[]) => void;
   panelWidths?: any[];
-  children?: React.ReactNode;
+  children?: JSX.Element | JSX.Element[];
   defaultPanel?: any;
   direction?: 'row' | 'column';
   spacing?: number;
@@ -207,8 +207,8 @@ function PanelGroup({
             <Divider
               className={dividerClassName}
               onDragStart={e => handleDragStart(i, e)}
-              onDrag={handleDrag}
-              onDragEnd={handleDragEnd}
+              //onDrag={handleDrag}<-- FFIXME: does not exit 
+              //onDragEnd={handleDragEnd}  <-- FFIXME: does not exit 
               size={spacing}
               color={borderColor}
               direction={direction}

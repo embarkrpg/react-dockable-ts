@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { MouseEventHandler, useEffect, useRef } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 
 import css from './css/Window.module.css';
@@ -10,7 +10,7 @@ export type WindowProps = {
   windowId: string;
   isLast: boolean;
   draggingTab: boolean;
-  hoverBorder: number;
+  hoverBorder: [number, number];
   selected: number;
   hideTabs: boolean;
   hideMenu: boolean;
@@ -54,10 +54,12 @@ function Window({
 
   // When tab has been switched, report the minsize of the new widget
   useEffect(() => {
-    function getSize(tab : number) {
+    function getSize(tab: number) {
       let widget = React.Children.toArray(children)[
         tab == undefined ? selected : tab
       ];
+
+      // @ts-ignore
       let size = widget.props.minHeight ? widget.props.minHeight : 0;
       return size + 34; // content size + tab bar
     }
@@ -97,8 +99,9 @@ function Window({
   }
 
   function renderBorders() {
-    if (!containerRef.current) return;
+    if (!containerRef.current) return undefined;
 
+    // @ts-ignore
     const rect = containerRef.current.getBoundingClientRect();
 
     return [
@@ -140,6 +143,7 @@ function Window({
       className={css.container}
       ref={containerRef}
       onMouseDown={() =>
+        // @ts-ignore
         onActive(React.Children.toArray(children)[selected].props.id)
       }
     >
@@ -156,7 +160,7 @@ function Window({
             onSort={onSort}
             windowId={windowId}
             hoverBorder={hoverBorder}
-            onClose={(...args) => onTabClosed(...args)}
+            onClose={onTabClosed}
             hideMenu={
               // hide the context menu if there aren't any actions to show
               hideMenu || !getActions(GetSelectedWidget()).length
@@ -177,11 +181,11 @@ export type TabBarProps = {
   widgets: React.ReactNode[];
   selected: number;
   onTabClick: (tabId: number, componentId: string) => void;
-  onContextClick: (actions: any[], x: number, y: number) => void;
+  onContextClick: MouseEventHandler<HTMLDivElement>;
   onSort: (windowId: string, from: number, to: number) => void;
   windowId: string;
-  hoverBorder: number;
-  onClose: (tabId: number) => void;
+  hoverBorder: [number, number];
+  onClose: (windowId: string, tabId?: number) => void;
   hideMenu: boolean;
   tabHeight: number;
 };
@@ -207,9 +211,8 @@ function TabBar({
     return {
       ...style,
       // cannot be 0, but make it super tiny
-      transition: `all ${curve} ${
-        snapshot.isDropAnimating ? 0.001 : duration
-      }s`,
+      transition: `all ${curve} ${snapshot.isDropAnimating ? 0.001 : duration
+        }s`,
       // boxShadow: snapshot.isDragging
       //   ? "0 1px 10px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.25)"
       //   : `1px -1px 0 #353535, -1px -1px 0 #353535`,
@@ -221,13 +224,12 @@ function TabBar({
     <Droppable droppableId={windowId} type="dockable-tab" direction="horizontal">
       {(provided, snapshot) => (
         <div
-          className={`${css.tabBar} ${
-            snapshot.isDraggingOver &&
+          className={`${css.tabBar} ${snapshot.isDraggingOver &&
             !snapshot.draggingFromThisWith &&
             !hoverBorder
-              ? css.tabBarHover
-              : ''
-          }`}
+            ? css.tabBarHover
+            : ''
+            }`}
           style={tabHeight ? { height: tabHeight } : {}}
         >
           {/* <div className={css.tabSpacer}> */}
@@ -236,46 +238,48 @@ function TabBar({
             className={css.tabSpacer}
             {...provided.droppableProps}
           >
-            {widgets.map((child, i) => {
-                const TabContainer = child.props.TabContainerComponent || 'div';
-                const maybeCloseTab = typeof TabContainer == 'string' ? {}: {closeTab: () => {
-                    if (child.props.onClose)
-                        child.props.onClose(child.props.id);
-                    onClose(windowId, i);
-                }}
+            {widgets.map((child: any, i) => {
+              const TabContainer = child.props.TabContainerComponent || 'div';
+              const maybeCloseTab = typeof TabContainer == 'string' ? {} : {
+                closeTab: () => {
+                  if (child.props.onClose)
+                    child.props.onClose(child.props.id);
+                  onClose(windowId, i);
+                }
+              }
 
-                return <Draggable
-                    key={`${windowId},${i}`}
-                    draggableId={`${windowId},${i}`}
-                    index={i}
-                >
-                    {(provided, snapshot) => (
-                        <TabContainer
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            key={i}
-                            className={`${css.tab} ${i === selected ? css.active : ''}`}
-                            {...maybeCloseTab}
-                            onMouseDown={e => {
-                                onTabClick(i, child.props.id);
-                                e.stopPropagation();
-                            }}
-                            style={getStyle(provided.draggableProps.style, snapshot)}
-                        >
-                            <span
-                                className={css.title}
-                                style={{
-                                    fontWeight:
-                                        i === selected && child.props.id === active
-                                            ? 'bold'
-                                            : 'normal',
-                                }}
-                            >
-                              {child.props.title || child.props.id}
-                            </span>
+              return <Draggable
+                key={`${windowId},${i}`}
+                draggableId={`${windowId},${i}`}
+                index={i}
+              >
+                {(provided, snapshot) => (
+                  <TabContainer
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    key={i}
+                    className={`${css.tab} ${i === selected ? css.active : ''}`}
+                    {...maybeCloseTab}
+                    onMouseDown={e => {
+                      onTabClick(i, child.props.id);
+                      e.stopPropagation();
+                    }}
+                    style={getStyle(provided.draggableProps.style, snapshot)}
+                  >
+                    <span
+                      className={css.title}
+                      style={{
+                        fontWeight:
+                          i === selected && child.props.id === active
+                            ? 'bold'
+                            : 'normal',
+                      }}
+                    >
+                      {child.props.title || child.props.id}
+                    </span>
 
-                            {/* {!hideMenu && (
+                    {/* {!hideMenu && (
                                 <div
                                   className={css.burgerMenuContainer}
                                   onClick={onContextClick}
@@ -289,15 +293,15 @@ function TabBar({
                                 </div>
                               )} */}
 
-                            {child.props.closeable ? (
-                                <div
-                                    className={css.closeBox}
-                                    onClick={closeTab}
-                                />
-                            ) : null}
-                        </TabContainer>
-                    )}
-                </Draggable>
+                    {child.props.closeable ? (
+                      <div
+                        className={css.closeBox}
+                        onClick={maybeCloseTab.closeTab}
+                      />
+                    ) : null}
+                  </TabContainer>
+                )}
+              </Draggable>
             })}
             {provided.placeholder}
           </div>

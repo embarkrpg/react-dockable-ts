@@ -5,7 +5,7 @@ export type WidgetProps = {
   title?: string;
   actions?: any[];
   minHeight?: number;
-  children?: React.ReactNode;
+  children?: JSX.Element | JSX.Element[];
 };
 
 // Not sure if I need a HOC anymore, so this is a wrapper component for widgets
