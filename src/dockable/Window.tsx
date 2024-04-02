@@ -239,13 +239,19 @@ function TabBar({
             {...provided.droppableProps}
           >
             {widgets.map((child: any, i) => {
-              const TabContainer = child.props.TabContainerComponent || 'div';
-              const maybeCloseTab = typeof TabContainer == 'string' ? {} : {
-                closeTab: () => {
-                  if (child.props.onClose)
-                    child.props.onClose(child.props.id);
-                  onClose(windowId, i);
+              if (child.props.TabContainerComponent) {
+                var TabContainer = child.props.TabContainerComponent;
+                var maybeCloseTab = {
+                  closeTab: () => {
+                    if (child.props.onClose)
+                      child.props.onClose(child.props.id);
+                    onClose(windowId, i);
+                  }
                 }
+              }
+              else {
+                TabContainer = 'div'
+                maybeCloseTab = {} as any
               }
 
               return <Draggable
