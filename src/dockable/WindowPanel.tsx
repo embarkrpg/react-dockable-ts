@@ -201,10 +201,10 @@ function WindowPanel({
               style={thisWindow.style}
               tabHeight={tabHeight}
             >
-              {filteredWidgets.map((widget, i) => {
+              {filteredWidgets.map((widget, index) => {
                 // Find component with the desired name
                 let Component = getWidgetComponent(widget);
-                if (!Component) Component = <Widget title="Missing Widget" />;
+                if (!Component) Component = <Widget key={index} title="Missing Widget" />;
                 return Component;
               })}
             </Window>
