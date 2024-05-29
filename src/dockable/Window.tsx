@@ -220,6 +220,18 @@ function TabBar({
     };
   }
 
+  function onWheel(event: React.WheelEvent<HTMLDivElement>) {
+      if(!event.shiftKey){
+          event.currentTarget.scrollLeft += event.deltaY;
+      }else{
+        const nextTabId = selected + (event.deltaY > 0 ? 1 : -1);
+        if (nextTabId < 0 || nextTabId >= widgets.length) return;
+        const widgetId = (widgets[nextTabId] as any)?.props?.id;
+        if(widgetId === undefined) return;
+        onTabClick(nextTabId, widgetId);
+      }
+  }
+
   return (
     <Droppable droppableId={windowId} type="dockable-tab" direction="horizontal">
       {(provided, snapshot) => (
@@ -236,6 +248,7 @@ function TabBar({
           <div
             ref={provided.innerRef}
             className={css.tabSpacer}
+            onWheel={onWheel}
             {...provided.droppableProps}
           >
             {widgets.map((child: any, i) => {

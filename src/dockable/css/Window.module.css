@@ -171,10 +171,17 @@
 }
 
 .tabSpacer {
-  display: flex;
-  flex-grow: 1;
-  flex-shrink: 1;
-  width: 0;
+    display: flex;
+    flex-grow: 1;
+    flex-shrink: 1;
+    width: 0;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scrollbar-width: none;
+}
+
+.tabSpacer::-webkit-scrollbar {
+    height: 0px;
 }
 
 .dropBorder {
